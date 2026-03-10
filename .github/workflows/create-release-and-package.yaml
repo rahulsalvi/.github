@@ -3,10 +3,6 @@ name: Create release and package
 
 on:
   workflow_call:
-    inputs:
-      image_name:
-        required: true
-        type: string
 
 env:
   REGISTRY: ghcr.io
@@ -49,7 +45,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ inputs.image_name }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=semver,pattern={{version}},value=${{ steps.calver.outputs.next_version }}
@@ -65,5 +61,5 @@ jobs:
       - name: Generate artifact attestation
         uses: actions/attest@v4
         with:
-          subject-name: ${{ env.REGISTRY }}/${{ inputs.image_name }}
+          subject-name: ${{ env.REGISTRY }}/${{ github.repository }}
           subject-digest: ${{ steps.push.outputs.digest }}
