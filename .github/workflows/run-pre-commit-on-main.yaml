@@ -1,0 +1,16 @@
+---
+name: Run pre-commit checks on pull requests or pushes to main
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  run-pre-commit:
+    uses: ./.github/workflows/run-pre-commit.yaml
+    permissions:
+      contents: read

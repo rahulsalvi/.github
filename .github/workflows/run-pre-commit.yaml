@@ -1,0 +1,22 @@
+---
+name: Run pre-commit hooks
+
+on:
+  workflow_call:
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Setup python
+        uses: actions/setup-python@v6
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
