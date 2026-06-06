@@ -1,0 +1,5 @@
+{
+  "name": "Container release on push to main",
+  "description": "Builds container image and creates release when pushing to repo main branch",
+  "iconName": "octicon container"
+}
