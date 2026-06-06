@@ -4,6 +4,9 @@ name: Container release
 on:
   workflow_call:
     inputs:
+      config_file:
+        required: false
+        type: string
       dockerfile:
         required: false
         type: string
@@ -27,6 +30,7 @@ jobs:
   publish-image:
     uses: ./.github/workflows/publish-image.yaml
     with:
+      config_file: ${{ inputs.config_file }}
       dockerfile: ${{ inputs.dockerfile }}
       context: ${{ inputs.context }}
       registry: ${{ inputs.registry }}

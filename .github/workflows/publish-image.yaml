@@ -4,6 +4,10 @@ name: Publish image
 on:
   workflow_call:
     inputs:
+      config_file:
+        required: false
+        type: string
+        default: container-config.yaml
       dockerfile:
         required: false
         type: string
@@ -48,13 +52,15 @@ jobs:
       - name: Load config
         id: config
         run: |
+          CONFIG_FILE="${{ inputs.config_file }}"
+
           resolve() {
             local key=$1 default=$2
             local val="${!key}"
             local yaml_key
             yaml_key=$(echo "$key" | tr '[:upper:]' '[:lower:]')
-            if [ -z "$val" ] && [ -f "container-config.yaml" ]; then
-              val=$(yq -r ".$yaml_key // empty" container-config.yaml)
+            if [ -z "$val" ] && [ -f "$CONFIG_FILE" ]; then
+              val=$(yq -r ".$yaml_key // empty" "$CONFIG_FILE")
             fi
             [ -z "$val" ] && val="$default"
             echo "$key=$val" >> $GITHUB_ENV
