@@ -22,22 +22,24 @@ on:
       hadolint:
         required: false
         type: string
-      release:
-        required: false
-        type: string
       attestation:
         required: false
         type: string
+    outputs:
+      version:
+        value: ${{ jobs.publish-image.outputs.version }}
 
 jobs:
   publish-image:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       packages: write
       attestations: write
       id-token: write
       artifact-metadata: write
+    outputs:
+      version: ${{ steps.calver.outputs.next_version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -49,8 +51,6 @@ jobs:
       - name: Load config
         id: config
         run: |
-          # Priority: explicit input > container-config.yaml > default
-
           resolve() {
             local key=$1 default=$2
             local val="${!key}"
@@ -69,17 +69,14 @@ jobs:
           IMAGE_NAME="${{ inputs.image_name }}"
           VERSION_FORMAT="${{ inputs.version_format }}"
           HADOLINT="${{ inputs.hadolint }}"
-          RELEASE="${{ inputs.release }}"
           ATTESTATION="${{ inputs.attestation }}"
 
-          # defaults
           resolve DOCKERFILE     "Dockerfile"
           resolve CONTEXT        "."
           resolve REGISTRY       "ghcr.io"
           resolve IMAGE_NAME     "${{ github.repository }}"
           resolve VERSION_FORMAT "%Y.%-m"
           resolve HADOLINT       "true"
-          resolve RELEASE        "true"
           resolve ATTESTATION    "true"
 
           echo "Image:          $REGISTRY/$IMAGE_NAME"
@@ -87,7 +84,6 @@ jobs:
           echo "Context:        $CONTEXT"
           echo "Version format: $VERSION_FORMAT"
           echo "Hadolint:       $HADOLINT"
-          echo "Release:        $RELEASE"
           echo "Attestation:    $ATTESTATION"
 
       - name: Calver
@@ -95,13 +91,6 @@ jobs:
         id: calver
         with:
           date_format: ${{ env.VERSION_FORMAT }}
-
-      - name: Create release
-        if: env.RELEASE == 'true'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.calver.outputs.next_version }}
-          name: "Version ${{ steps.calver.outputs.next_version }}"
 
       - name: Log in to the container registry
         uses: docker/login-action@v4

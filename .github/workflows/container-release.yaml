@@ -1,0 +1,47 @@
+---
+name: Container release
+
+on:
+  workflow_call:
+    inputs:
+      dockerfile:
+        required: false
+        type: string
+      context:
+        required: false
+        type: string
+      registry:
+        required: false
+        type: string
+      image_name:
+        required: false
+        type: string
+      version_format:
+        required: false
+        type: string
+      hadolint:
+        required: false
+        type: string
+      attestation:
+        required: false
+        type: string
+
+jobs:
+  publish-image:
+    uses: ./.github/workflows/publish-image.yaml
+    with:
+      dockerfile: ${{ inputs.dockerfile }}
+      context: ${{ inputs.context }}
+      registry: ${{ inputs.registry }}
+      image_name: ${{ inputs.image_name }}
+      version_format: ${{ inputs.version_format }}
+      hadolint: ${{ inputs.hadolint }}
+      attestation: ${{ inputs.attestation }}
+    secrets: inherit
+
+  create-release:
+    needs: publish-image
+    uses: ./.github/workflows/create-release.yaml
+    with:
+      version: ${{ needs.publish-image.outputs.version }}
+    secrets: inherit
