@@ -63,7 +63,7 @@ jobs:
               val=$(yq -r ".$yaml_key // empty" "$CONFIG_FILE")
             fi
             [ -z "$val" ] && val="$default"
-            echo "$key=$val" >> $GITHUB_ENV
+            echo "$key=$val" >> "$GITHUB_ENV"
           }
 
           DOCKERFILE="${{ inputs.dockerfile }}"
