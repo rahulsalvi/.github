@@ -16,9 +16,6 @@ on:
       image_name:
         required: false
         type: string
-      version_format:
-        required: false
-        type: string
       hadolint:
         required: false
         type: string
@@ -67,7 +64,6 @@ jobs:
           CONTEXT="${{ inputs.context }}"
           REGISTRY="${{ inputs.registry }}"
           IMAGE_NAME="${{ inputs.image_name }}"
-          VERSION_FORMAT="${{ inputs.version_format }}"
           HADOLINT="${{ inputs.hadolint }}"
           ATTESTATION="${{ inputs.attestation }}"
 
@@ -75,14 +71,12 @@ jobs:
           resolve CONTEXT        "."
           resolve REGISTRY       "ghcr.io"
           resolve IMAGE_NAME     "${{ github.repository }}"
-          resolve VERSION_FORMAT "%Y.%-m"
           resolve HADOLINT       "true"
           resolve ATTESTATION    "true"
 
           echo "Image:          $REGISTRY/$IMAGE_NAME"
           echo "Dockerfile:     $DOCKERFILE"
           echo "Context:        $CONTEXT"
-          echo "Version format: $VERSION_FORMAT"
           echo "Hadolint:       $HADOLINT"
           echo "Attestation:    $ATTESTATION"
 
@@ -90,7 +84,7 @@ jobs:
         uses: energostack/calver-action@v1
         id: calver
         with:
-          date_format: ${{ env.VERSION_FORMAT }}
+          date_format: "%Y.%-m"
 
       - name: Log in to the container registry
         uses: docker/login-action@v4
