@@ -34,11 +34,11 @@ jobs:
   publish-image:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
       artifact-metadata: write
+      attestations: write
+      contents: read
+      id-token: write
+      packages: write
     outputs:
       version: ${{ steps.calver.outputs.next_version }}
     steps:

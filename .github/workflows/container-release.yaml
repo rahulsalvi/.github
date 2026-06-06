@@ -38,6 +38,12 @@ jobs:
       hadolint: ${{ inputs.hadolint }}
       attestation: ${{ inputs.attestation }}
     secrets: inherit
+    permissions:
+      artifact-metadata: write
+      attestations: write
+      contents: read
+      id-token: write
+      packages: write
 
   create-release:
     needs: publish-image
@@ -45,3 +51,5 @@ jobs:
     with:
       version: ${{ needs.publish-image.outputs.version }}
     secrets: inherit
+    permissions:
+      contents: write
