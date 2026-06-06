@@ -3,7 +3,8 @@ name: Container release on push to main
 
 on:
   push:
-    branches: [$default-branch]
+    branches:
+      - main
 
 jobs:
   container-release:
